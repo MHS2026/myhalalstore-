@@ -1,4 +1,17 @@
 // ============================================================
+//  LOGO SETTINGS — edit here to change logo across all pages
+// ============================================================
+const LOGO = {
+  // To change the logo:
+  // 1. Upload your new logo to imgbb.com
+  // 2. Paste the direct URL here
+  // 3. Or keep null to use the embedded default
+  url: null,          // ← paste URL here, e.g. "https://i.ibb.co/xxx/logo.png"
+  height: 60,         // ← logo height in px (nav bar)
+  footerHeight: 60,   // ← logo height in footer
+}
+
+// ============================================================
 //  MY HALAL STORE — MASTER CONFIGURATION
 //  This is the ONLY file you need to edit to:
 //  - Change prices
