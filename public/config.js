@@ -43,6 +43,7 @@ const PRODUCTS = [
     image: null,                    // ← paste image URL here
     tag: "Top Seller",              // ← options: "Top Seller", "Best Value", "Popular", null
     pricePerLb: 7.00,               // ← EDIT PRICE HERE
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "boneless",            // ← "boneless", "bone-in", "mince"
     piecesPerLb: "3-4 pieces/lb",   // ← shown on product card
     favorite: true,                 // ← true = shows on homepage carousel
@@ -58,6 +59,7 @@ const PRODUCTS = [
     image: null,
     tag: null,
     pricePerLb: 7.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "bone-in",
     piecesPerLb: "2-3 pieces/lb",
     favorite: false,
@@ -73,6 +75,7 @@ const PRODUCTS = [
     image: null,
     tag: null,
     pricePerLb: 7.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "boneless",
     piecesPerLb: "3-4 pieces/lb",
     favorite: false,
@@ -88,6 +91,7 @@ const PRODUCTS = [
     image: null,
     tag: null,                      // ← removed "85% Lean" tag — now shown as chip instead
     pricePerLb: 7.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "mince",
     piecesPerLb: "4 servings/lb",
     favorite: false,
@@ -105,6 +109,7 @@ const PRODUCTS = [
     image: null,
     tag: "Best Value",
     pricePerLb: 2.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "mixed",
     piecesPerLb: "8-10 pieces/lb",
     favorite: true,
@@ -120,6 +125,7 @@ const PRODUCTS = [
     image: null,
     tag: null,
     pricePerLb: 2.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "boneless",
     piecesPerLb: "2-3 pieces/lb",
     favorite: false,
@@ -135,6 +141,7 @@ const PRODUCTS = [
     image: null,
     tag: null,
     pricePerLb: 2.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "bone-in",
     piecesPerLb: "4-5 pieces/lb",
     favorite: false,
@@ -152,6 +159,7 @@ const PRODUCTS = [
     image: null,
     tag: "Popular",
     pricePerLb: 13.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "bone-in",
     piecesPerLb: "4-5 pieces/lb",
     favorite: true,
@@ -169,6 +177,7 @@ const PRODUCTS = [
     image: null,
     tag: "Popular",
     pricePerLb: 13.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "bone-in",
     piecesPerLb: "4-5 pieces/lb",
     favorite: true,
@@ -184,6 +193,7 @@ const PRODUCTS = [
     image: null,
     tag: null,
     pricePerLb: 13.00,
+    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "bone-in",
     piecesPerLb: "1 shank/lb",
     favorite: true,
