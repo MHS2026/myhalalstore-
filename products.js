@@ -40,7 +40,7 @@ const PRODUCTS = [
     categoryLabel: "Beef",
     emoji: "🥩",
     tag: null,
-    pricePerLb: 7.00,
+    pricePerLb: 40.00,
     cutType: "boneless",
     serves: "3–4 per lb",
     favorite: false,
