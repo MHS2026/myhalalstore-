@@ -490,7 +490,7 @@ if(track){
       <div class="product-body">
         <div class="product-name">${p.name}</div>
         <div class="product-meta">${p.categoryLabel} · $${p.pricePerLb.toFixed(2)}/lb</div>
-        <div class="product-serves">🍽 ${p.serves}</div>
+        <div class="product-serves">🍽 ${p.piecesPerLb||p.serves||""}</div>
         <div class="product-footer">
           <div class="product-price">$${p.pricePerLb.toFixed(2)}<small>/lb</small></div>
           <button class="add-btn" onclick="quickAdd('${p.id}')">+</button>
