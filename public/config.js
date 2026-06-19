@@ -40,7 +40,7 @@ const PRODUCTS = [
     category: "beef",
     categoryLabel: "Beef",
     emoji: "🥩",
-    image: null,                    // ← paste image URL here
+    image: "https://ibb.co/67wHLgRx",   // ← paste image URL here
     tag: "Top Seller",              // ← options: "Top Seller", "Best Value", "Popular", null
     pricePerLb: 7.00,               // ← EDIT PRICE HERE
     originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
@@ -56,10 +56,10 @@ const PRODUCTS = [
     category: "beef",
     categoryLabel: "Beef",
     emoji: "🍖",
-    image: null,
+    image: "https://ibb.co/QvJbQf81",
     tag: null,
     pricePerLb: 7.00,
-    originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
+    originalPrice: 9.00,            // ← set to e.g. 9.00 for crossed-out price
     cutType: "bone-in",
     piecesPerLb: "2-3 pieces/lb",
     favorite: false,
