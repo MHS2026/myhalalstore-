@@ -40,7 +40,7 @@ const PRODUCTS = [
     category: "beef",
     categoryLabel: "Beef",
     emoji: "🥩",
-    image: "https://ibb.co/67wHLgRx",   // ← paste image URL here
+    image: "https://i.ibb.co/2D8702t/Product1-1.png",   // ← paste image URL here
     tag: "Top Seller",              // ← options: "Top Seller", "Best Value", "Popular", null
     pricePerLb: 7.00,               // ← EDIT PRICE HERE
     originalPrice: null,            // ← set to e.g. 9.00 for crossed-out price
@@ -56,7 +56,7 @@ const PRODUCTS = [
     category: "beef",
     categoryLabel: "Beef",
     emoji: "🍖",
-    image: "https://ibb.co/QvJbQf81",
+    image: "https://i.ibb.co/Dm6XgTp/Product2-1.png",
     tag: null,
     pricePerLb: 7.00,
     originalPrice: 9.00,            // ← set to e.g. 9.00 for crossed-out price
