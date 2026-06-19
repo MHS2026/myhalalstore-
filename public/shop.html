@@ -381,18 +381,24 @@ function renderProducts(){
   const cats=['beef','chicken','lamb','goat'];
   const icons={beef:'🥩',chicken:'🍗',lamb:'🐑',goat:'🐐'};
   const labels={beef:'Beef',chicken:'Chicken',lamb:'Lamb',goat:'Goat'};
-  const cartItems=getCart();let html='';
+  let html='';
   cats.forEach(cat=>{
     const cp=prods.filter(p=>p.category===cat);if(!cp.length)return;
     html+=`<div class="pcat-section"><div class="pcat-header"><span class="pcat-icon">${icons[cat]}</span><span class="pcat-title">${labels[cat]}</span><span class="pcat-count">${cp.length} product${cp.length!==1?'s':''}</span></div><div class="pgrid">`;
     cp.forEach(p=>{
-      const inCart=cartItems.find(i=>i.id===p.id);const lbs=lbState[p.id]||1;
+      const lbs=lbState[p.id]||1;
       const tag=p.tag&&ALLOWED_TAGS.includes(p.tag)?`<div class="pcard-tag">${p.tag}</div>`:'';
       const imgContent=p.image?`<img src="${p.image}" alt="${p.name}">`:`<span class="emoji-fallback">${p.emoji}</span>`;
       // Price display
       const dollars=Math.floor(p.pricePerLb);
       const cents=(p.pricePerLb%1*100).toFixed(0).padStart(2,'0');
-      const priceHtml=`<div class="pcard-price"><span class="cents">$</span>${dollars}<span style="font-size:13px;vertical-align:super">${cents!=='00'?'.'+cents:''}</span><small>/lb</small></div>`;
+      const // Discount display
+      let discountHtml='';
+      if(p.originalPrice&&p.originalPrice>p.pricePerLb){
+        const pct=Math.round((1-p.pricePerLb/p.originalPrice)*100);
+        discountHtml=`<div class="price-original"><span class="price-strike">$${p.originalPrice.toFixed(2)}/lb</span><span class="price-badge">${pct}% off</span></div>`;
+      }
+      priceHtml=`<div class="price-block">${discountHtml}<div class="price-main"><span class="price-dollar">$</span><span class="price-value">${dollars}</span>${cents!=='00'?`<span style="font-size:14px;font-weight:700;line-height:2;align-self:flex-start">.${cents}</span>`:''}<span class="price-per">/lb</span></div></div>`;
       html+=`<div class="pcard" id="p-${p.id}">
         <div class="pcard-img">${imgContent}${tag}</div>
         <div class="pcard-body">
@@ -410,7 +416,7 @@ function renderProducts(){
               <button class="lb-btn" onclick="changeLbs('${p.id}',-1)">&#8722;</button>
               <span class="lb-val" id="lb-${p.id}">${lbs}lb</span>
               <button class="lb-btn" onclick="changeLbs('${p.id}',1)">+</button>
-              <button class="add-cart-btn ${inCart?'added':''}" onclick="addFromCard('${p.id}')">${inCart?'✓ Added':'Add'}</button>
+              <button class="add-cart-btn" onclick="addFromCard('${p.id}')">Add</button>
             </div>
           </div>
         </div>
