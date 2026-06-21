@@ -1,70 +1,94 @@
-// api/webhook.js
-// Receives Stripe webhook events after successful payment
-// Writes order to Google Sheets via Google Apps Script webhook URL
+import Stripe from 'stripe'
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
 
-module.exports = async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end()
+export const config = {
+  api: {
+    bodyParser: false,  // CRITICAL — must be raw for Stripe signature verification
+  },
+}
 
-  const sig = req.headers["stripe-signature"]
+// Helper to read raw body from stream
+async function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = []
+    req.on('data', chunk => chunks.push(chunk))
+    req.on('end', () => resolve(Buffer.concat(chunks)))
+    req.on('error', reject)
+  })
+}
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
   let event
+  const rawBody = await getRawBody(req)
+  const sig = req.headers['stripe-signature']
 
   try {
-    event = stripe.webhooks.constructEvent(
-      req.body, // raw body — must be raw Buffer, not parsed JSON
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    )
+    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)
   } catch (err) {
-    console.error("Webhook signature error:", err.message)
+    console.error('Webhook signature verification failed:', err.message)
     return res.status(400).json({ error: `Webhook error: ${err.message}` })
   }
 
-  // Only handle successful payments
-  if (event.type === "checkout.session.completed") {
+  if (event.type === 'checkout.session.completed') {
     const session = event.data.object
 
-    // Only process paid sessions
-    if (session.payment_status !== "paid") {
-      return res.status(200).json({ received: true })
-    }
+    // Extract address fields
+    const shipping = session.shipping_details || {}
+    const address  = shipping.address || {}
+    const name     = shipping.name || session.customer_details?.name || ''
+    const email    = session.customer_details?.email || ''
+    const phone    = session.customer_details?.phone || ''
 
-    const meta = session.metadata
+    // Extract line items from metadata (set during checkout creation)
     let items = []
-    try { items = JSON.parse(meta.items || "[]") } catch {}
-
-    const orderData = {
-      orderId: meta.orderId,
-      stripeSessionId: session.id,
-      stripePaymentIntent: session.payment_intent,
-      timestamp: new Date().toISOString(),
-      customerName: meta.customerName,
-      customerEmail: meta.customerEmail,
-      customerPhone: meta.customerPhone,
-      deliveryAddress: meta.deliveryAddress,
-      deliveryNotes: meta.deliveryNotes,
-      items,
-      subtotal: meta.subtotal,
-      deliveryFee: meta.deliveryFee,
-      grandTotal: meta.grandTotal,
-      paymentStatus: "Paid",
-      orderStatus: "To Pack",
+    try {
+      items = JSON.parse(session.metadata?.items || '[]')
+    } catch (e) {
+      items = []
     }
 
-    // ── SEND TO GOOGLE APPS SCRIPT ──
-    try {
-      const response = await fetch(process.env.GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      })
-      if (!response.ok) {
-        console.error("Google Script error:", await response.text())
+    const total       = (session.amount_total / 100).toFixed(2)
+    const subtotal    = (session.metadata?.subtotal || (session.amount_total / 100)).toString()
+    const deliveryFee = session.metadata?.deliveryFee || '8.99'
+    const orderId     = session.metadata?.orderId || 'MHS-' + session.id.slice(-8).toUpperCase()
+
+    const payload = {
+      orderId,
+      customerName  : name,
+      customerEmail : email,
+      customerPhone : phone,
+      address       : address.line1 || '',
+      city          : address.city || '',
+      zip           : address.postal_code || '',
+      items,
+      subtotal,
+      deliveryFee,
+      total,
+      stripeSessionId: session.id
+    }
+
+    // Send to Google Apps Script
+    if (process.env.GOOGLE_SCRIPT_URL) {
+      try {
+        const response = await fetch(process.env.GOOGLE_SCRIPT_URL, {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body   : JSON.stringify(payload)
+        })
+        const result = await response.text()
+        console.log('Google Script response:', result)
+      } catch (err) {
+        console.error('Google Script error:', err.message)
+        // Don't fail the webhook — Stripe needs 200
       }
-    } catch (err) {
-      console.error("Failed to reach Google Script:", err.message)
-      // Don't return error — Stripe will retry. Log and continue.
+    } else {
+      console.warn('GOOGLE_SCRIPT_URL not set — skipping sheet update')
     }
   }
 
