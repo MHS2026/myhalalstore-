@@ -36,7 +36,7 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 .ann-bar strong{color:var(--gold-lt)}
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--forest);color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media(max-width:768px){.nav{padding:0 20px}.nav-links{display:none}}
+@media(max-width:768px){.nav{padding:12px 20px;height:auto;min-height:64px}.nav-links{display:none}.nav-logo img{height:36px}}
 
 .shop-hero{background:var(--forest);padding:28px 60px 24px;position:relative;overflow:hidden}
 .shop-hero::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(184,134,11,.15),transparent);pointer-events:none}
@@ -150,7 +150,8 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
   .pcard-name{font-size:13px}
   .pcard-desc{display:none}
   .price-value{font-size:22px}
-  .hits-scroll{gap:10px}
+  .hits-scroll{gap:10px;width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #hits-section{overflow:hidden;max-width:100%}
   .hit-card{width:140px}
   .qfilters{gap:6px;margin-top:12px}
   .qfilter{min-width:50px;padding:6px 10px;font-size:11px}
@@ -162,8 +163,7 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
   .products-count{font-size:12px}
 }
 @media(max-width:400px){
-  .pgrid{grid-template-columns:1fr}
-  .hit-card{width:130px}
+  .hit-card{width:120px}
 }
 
 .hits-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;margin-bottom:4px}
