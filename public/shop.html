@@ -130,7 +130,41 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 .checkout-btn{width:100%;padding:13px;background:var(--forest);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
 .checkout-btn:hover:not(:disabled){background:var(--gold)}
 .checkout-btn:disabled{opacity:.45;cursor:not-allowed}
-@media(max-width:900px){.shop-layout{grid-template-columns:1fr}.sidebar{position:static;max-height:none}.pgrid{grid-template-columns:1fr 1fr}.shop-hero{padding:20px}.cart-drawer{width:100%}}
+@media(max-width:900px){
+  .shop-layout{grid-template-columns:1fr}
+  .sidebar{position:static;max-height:none}
+  .pgrid{grid-template-columns:1fr 1fr}
+  .shop-hero{padding:20px}
+  .cart-drawer{width:100%}
+}
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.filter-toggle-btn{display:none}
+@media(max-width:900px){
+  .filter-toggle-btn{display:flex;align-items:center;gap:8px;background:var(--forest);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;margin:10px 20px 0;cursor:pointer;width:calc(100% - 40px)}
+  .sidebar{display:none;border-right:none;border-bottom:1px solid var(--border)}
+  .sidebar.open{display:block}
+  .shop-main{padding:14px 16px}
+  .pgrid{grid-template-columns:1fr 1fr;gap:10px}
+  .pcard-img{height:120px}
+  .pcard-body{padding:10px}
+  .pcard-name{font-size:13px}
+  .pcard-desc{display:none}
+  .price-value{font-size:22px}
+  .hits-scroll{gap:10px}
+  .hit-card{width:140px}
+  .qfilters{gap:6px;margin-top:12px}
+  .qfilter{min-width:50px;padding:6px 10px;font-size:11px}
+  .qfilter-icon{font-size:16px}
+  .shop-hero{padding:16px 16px 14px}
+  .shop-hero h1{font-size:26px;margin-bottom:4px}
+  .shop-hero p{font-size:12px;margin-bottom:10px}
+  .pgrid-header{flex-wrap:wrap;gap:8px}
+  .products-count{font-size:12px}
+}
+@media(max-width:400px){
+  .pgrid{grid-template-columns:1fr}
+  .hit-card{width:130px}
+}
 
 .hits-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;margin-bottom:4px}
 .hits-scroll::-webkit-scrollbar{display:none}
@@ -208,8 +242,11 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
     <button class="qfilter" data-filter="bone-in"><span class="qfilter-icon">🦴</span>Bone-in</button>
   </div>
 </div>
+<button class="filter-toggle-btn" id="filter-toggle-btn" onclick="toggleSidebar()">
+  <span id="filter-toggle-icon">☰</span> Filters & Categories
+</button>
 <div class="shop-layout">
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-sec">
       <div class="sidebar-title">Category</div>
       <div class="filter-opt"><input type="checkbox" id="f-beef" checked data-cat="beef"><label for="f-beef">Beef</label><span class="cnt">4</span></div>
@@ -461,10 +498,27 @@ document.querySelectorAll('.qfilter').forEach(btn=>btn.addEventListener('click',
   this.classList.add('active');currentFilter=this.dataset.filter;renderProducts();updateHitsVisibility();
 }));
 document.getElementById('sort-sel')?.addEventListener('change',()=>renderProducts());
-document.getElementById('apply-filter')?.addEventListener('click',()=>renderProducts());
-document.querySelectorAll('[data-cat],[data-cut]').forEach(cb=>cb.addEventListener('change',()=>renderProducts()));
+document.getElementById('apply-filter')?.addEventListener('click',()=>{renderProducts();mobileAutoClose()});
+document.querySelectorAll('[data-cat],[data-cut]').forEach(cb=>cb.addEventListener('change',()=>{renderProducts();mobileAutoClose()}));
 
 updateBadge();renderProducts();
+
+// Mobile sidebar toggle
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ic=document.getElementById('filter-toggle-icon');
+  const open=sb.classList.toggle('open');
+  ic.textContent=open?'✕':'☰';
+}
+// Auto-close sidebar after filter applied on mobile
+function mobileAutoClose(){
+  if(window.innerWidth<=900){
+    const sb=document.getElementById('sidebar');
+    const ic=document.getElementById('filter-toggle-icon');
+    sb.classList.remove('open');
+    ic.textContent='☰';
+  }
+}
 
 // Set WhatsApp links dynamically from config
 if(typeof STORE !== 'undefined') {
@@ -474,4 +528,4 @@ if(typeof STORE !== 'undefined') {
 
 </script>
 </body>
-</html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   

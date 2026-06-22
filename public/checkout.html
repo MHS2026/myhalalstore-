@@ -393,7 +393,7 @@ if (!cart.length) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          cartItems:    getCart().map(i => ({ id: i.id, lbs: i.lbs })),
+          cartItems: getCart().map(i => ({ id: i.id, name: i.name, lbs: i.lbs, pricePerLb: i.pricePerLb })),
           customerInfo: { name, phone, email, street, apt, city, state, zip, notes, deliveryDate: deliveryDateStr },
           promoCode:    appliedPromo ? appliedPromo.code : null,
           discount:     disc,
