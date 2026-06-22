@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5WZT3M3B2C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5WZT3M3B2C');
+</script>
+<script src="https://t.contentsquare.net/uxa/24c084cb36152.js" defer></script>
 <title>Order Confirmed | My Halal Store</title>
 <style>
 
@@ -176,6 +185,21 @@ if (order) {
 
     html += `<div class="total-row final"><span>Total Paid</span><span>$${paid.toFixed(2)}</span></div>`;
     totalsEl.innerHTML = html;
+
+    // GA4 purchase conversion event
+    if (typeof gtag === 'function') {
+      gtag('event', 'purchase', {
+        transaction_id: orderId,
+        value: paid,
+        currency: 'USD',
+        items: order.items.map((i, idx) => ({
+          item_id: i.id || String(idx),
+          item_name: i.name,
+          price: i.pricePerLb,
+          quantity: i.lbs,
+        }))
+      });
+    }
   }
 
   // WhatsApp message with full order summary
@@ -185,15 +209,4 @@ if (order) {
     const lines = order.items.map(i => `${i.name} — ${i.lbs}lb`).join(', ');
     const promoNote = order.promoCode ? ` | Promo: ${order.promoCode}` : '';
     const msg = encodeURIComponent(
-      `Hi! Just placed Order ${orderId}.\nItems: ${lines}.\nDelivery: ${order.deliveryDate}.\nAddress: ${order.street}, ${order.city}, ${order.zip}.${promoNote}`
-    );
-    waBtn.href = `https://wa.me/${waNum}?text=${msg}`;
-  }
-}
-
-// Clear cart and pending order after successful confirmation
-localStorage.removeItem('mhs_cart');
-localStorage.removeItem('mhs_pending_order');
-</script>
-</body>
-</html>
+      `Hi! J

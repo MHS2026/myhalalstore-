@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5WZT3M3B2C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5WZT3M3B2C');
+</script>
+<script src="https://t.contentsquare.net/uxa/24c084cb36152.js" defer></script>
 <title>Checkout | My Halal Store</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
@@ -393,7 +402,7 @@ if (!cart.length) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          cartItems: getCart().map(i => ({ id: i.id, name: i.name, lbs: i.lbs, pricePerLb: i.pricePerLb })),
+          cartItems:    getCart().map(i => ({ id: i.id, lbs: i.lbs })),
           customerInfo: { name, phone, email, street, apt, city, state, zip, notes, deliveryDate: deliveryDateStr },
           promoCode:    appliedPromo ? appliedPromo.code : null,
           discount:     disc,

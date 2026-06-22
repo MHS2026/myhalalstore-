@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5WZT3M3B2C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5WZT3M3B2C');
+</script>
+<script src="https://t.contentsquare.net/uxa/24c084cb36152.js" defer></script>
 <title>My Halal Store | Fresh Halal Meat Delivery in Katy, TX</title>
 <meta name="description" content="Fresh certified halal beef, chicken, and lamb delivered Tuesday, Thursday &amp; Saturday to Katy, Cinco Ranch, Sugar Land and Greater Houston. Min order $35.">
 <meta name="keywords" content="halal meat delivery Katy TX, fresh halal beef Katy, halal chicken Houston, halal goat lamb Katy Texas">
@@ -577,20 +586,4 @@ if(track){
   if(dotsEl){dotsEl.innerHTML=Array.from({length:nd},(_,i)=>`<div class="carousel-dot${i===0?' active':''}" data-i="${i}"></div>`).join('');dotsEl.querySelectorAll('.carousel-dot').forEach(d=>d.addEventListener('click',()=>goTo(parseInt(d.dataset.i||'0'))))}
   function updateDots(){dotsEl?.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===cur))}
   function goTo(idx){cur=idx;const cw=cards[0]?.offsetWidth||0;track.style.transform=`translateX(-${cur*(cw+24)}px)`;updateDots()}
-  if(arrow)arrow.addEventListener('click',()=>goTo(cur+1>cards.length-VIS?0:cur+1));
-
-  // Touch swipe support for mobile carousel
-  let _sx=0,_sy=0;
-  track.addEventListener('touchstart',e=>{_sx=e.touches[0].clientX;_sy=e.touches[0].clientY},{passive:true});
-  track.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-_sx;
-    const dy=e.changedTouches[0].clientY-_sy;
-    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
-      if(dx<0) goTo(cur+1>cards.length-VIS?0:cur+1);
-      else goTo(cur-1<0?Math.max(0,cards.length-VIS):cur-1);
-    }
-  },{passive:true});
-}
-</script>
-</body>
-</html>
+  if(arrow)arrow.addEventListener('click',()=>goTo(cur+1>ca
