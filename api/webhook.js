@@ -53,19 +53,21 @@ export default async function handler(req, res) {
       items = []
     }
 
-    const total       = (session.amount_total / 100).toFixed(2)
-    const subtotal    = (session.metadata?.subtotal || (session.amount_total / 100)).toString()
-    const deliveryFee = session.metadata?.deliveryFee || '8.99'
-    const orderId     = session.metadata?.orderId || 'MHS-' + session.id.slice(-8).toUpperCase()
+    const total        = (session.amount_total / 100).toFixed(2)
+    const subtotal     = (session.metadata?.subtotal    || (session.amount_total / 100)).toString()
+    const deliveryFee  = session.metadata?.deliveryFee  || '8.99'
+    const orderId      = session.metadata?.orderId      || 'MHS-' + session.id.slice(-8).toUpperCase()
+    const deliveryDate = session.metadata?.deliveryDate || ''   // ← ADDED
 
     const payload = {
       orderId,
       customerName  : name,
       customerEmail : email,
       customerPhone : phone,
-      address       : address.line1 || '',
-      city          : address.city || '',
+      address       : address.line1 || session.metadata?.deliveryAddress || '',
+      city          : address.city  || '',
       zip           : address.postal_code || '',
+      deliveryDate,                                              // ← ADDED
       items,
       subtotal,
       deliveryFee,

@@ -79,7 +79,11 @@ module.exports = async function handler(req, res) {
     }
 
     const orderId = "MHS-" + Date.now().toString(36).toUpperCase()
-    const deliveryAddress = [customerInfo.street, customerInfo.apt, `${customerInfo.city}, ${customerInfo.state || "TX"} ${customerInfo.zip}`].filter(Boolean).join(", ")
+    const deliveryAddress = [
+      customerInfo.street,
+      customerInfo.apt,
+      `${customerInfo.city}, ${customerInfo.state || "TX"} ${customerInfo.zip}`
+    ].filter(Boolean).join(", ")
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -90,14 +94,15 @@ module.exports = async function handler(req, res) {
       cancel_url: `${process.env.SITE_URL}/checkout?cancelled=true`,
       metadata: {
         orderId,
-        customerName: customerInfo.name,
-        customerEmail: customerInfo.email,
-        customerPhone: customerInfo.phone,
+        customerName:    customerInfo.name,
+        customerEmail:   customerInfo.email,
+        customerPhone:   customerInfo.phone,
         deliveryAddress,
-        deliveryNotes: customerInfo.notes || "",
-        subtotal: subtotal.toFixed(2),
-        deliveryFee: deliveryFee.toFixed(2),
-        grandTotal: grandTotal.toFixed(2),
+        deliveryDate:    customerInfo.deliveryDate  || "",   // ← ADDED
+        deliveryNotes:   customerInfo.notes         || "",
+        subtotal:        subtotal.toFixed(2),
+        deliveryFee:     deliveryFee.toFixed(2),
+        grandTotal:      grandTotal.toFixed(2),
         items: JSON.stringify(validatedItems.map(i => ({
           name: i.name, lbs: i.lbs, pricePerLb: i.pricePerLb, itemTotal: i.itemTotal,
         }))),
