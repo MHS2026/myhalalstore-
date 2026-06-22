@@ -133,6 +133,17 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
     </div>
 
     <div class="co-sec">
+      <h2>🏷️ Promo Code</h2>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <div class="fg" style="flex:1;margin:0">
+          <input type="text" id="f-promo" placeholder="Enter promo code" style="text-transform:uppercase;letter-spacing:1px">
+        </div>
+        <button onclick="applyPromo()" style="background:var(--forest);color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">Apply</button>
+      </div>
+      <div id="promo-msg" style="margin-top:8px;font-size:13px;display:none"></div>
+    </div>
+
+    <div class="co-sec">
       <h2>💳 Payment</h2>
       <div style="background:var(--cream);border-radius:8px;padding:14px;display:flex;gap:11px;align-items:flex-start">
         <span style="font-size:22px;flex-shrink:0">🔒</span>
@@ -170,103 +181,178 @@ if(new URLSearchParams(window.location.search).get('cancelled')==='true'){
   if(msg){msg.textContent='Payment was cancelled. Your cart is saved — try again when ready.';msg.classList.add('show')}
 }
 
-const cart=getCart();
-if(!cart.length){
-  document.getElementById('empty-co').style.display='block';
-  document.getElementById('co-layout').style.display='none';
-} else {
-  // Order summary
-  const sub=parseFloat(cartSubtotal().toFixed(2));
-  const del=cartDelivery();
-  const total=parseFloat(cartTotal().toFixed(2));
+// ── PROMO STATE ──────────────────────────────────────────────
+let appliedPromo = null;
 
-  document.getElementById('os-items').innerHTML=cart.map(i=>{
-    const imgEl=i.image?`<img src="${i.image}" alt="${i.name}">`:`<span>${i.emoji}</span>`;
+function applyPromo() {
+  const input   = document.getElementById('f-promo');
+  const msgEl   = document.getElementById('promo-msg');
+  const sub     = parseFloat(cartSubtotal().toFixed(2));
+  const result  = validatePromo(input.value, sub);
+
+  msgEl.style.display = 'block';
+  if (result.valid) {
+    appliedPromo = result;
+    const amt = promoDiscountAmount(result, sub);
+    msgEl.style.color = 'var(--forest)';
+    msgEl.textContent = '✅ ' + result.label + ' (−$' + amt.toFixed(2) + ')';
+    input.value = result.code;
+    input.disabled = true;
+    renderTotals();
+  } else {
+    appliedPromo = null;
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = '❌ ' + result.error;
+    renderTotals();
+  }
+}
+
+// Allow pressing Enter in promo field
+document.addEventListener('DOMContentLoaded', () => {
+  const promoInput = document.getElementById('f-promo');
+  if (promoInput) {
+    promoInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyPromo(); } });
+  }
+});
+
+// ── DELIVERY DATE ENGINE ─────────────────────────────────────
+let selectedDeliveryDate = null; // will be a Date object
+
+function renderDeliverySlots() {
+  const dates  = getUpcomingDeliveryDates();
+  const grid   = document.getElementById('slot-grid');
+  if (!grid || !dates.length) return;
+
+  selectedDeliveryDate = dates[0];
+
+  grid.innerHTML = dates.map((d, i) => {
+    const label = formatDeliveryDate(d);
+    const iso   = d.toISOString().slice(0,10);
+    return `<button class="slot-btn ${i===0?'sel':''}" data-iso="${iso}" onclick="selectSlot(this, '${iso}')">${label}</button>`;
+  }).join('');
+}
+
+function selectSlot(el, iso) {
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  const [y,m,d] = iso.split('-').map(Number);
+  selectedDeliveryDate = new Date(y, m-1, d);
+}
+
+// ── TOTALS RENDERER ──────────────────────────────────────────
+function renderTotals() {
+  const sub  = parseFloat(cartSubtotal().toFixed(2));
+  const del  = cartDelivery(sub);
+  const disc = appliedPromo ? promoDiscountAmount(appliedPromo, sub) : 0;
+  const total = Math.max(0, parseFloat((sub + del - disc).toFixed(2)));
+
+  let html = `
+    <div class="os-row"><span>Subtotal</span><span>$${sub.toFixed(2)}</span></div>
+    <div class="os-row"><span>Delivery</span><span>${del===0?'🎉 Free':'$'+del.toFixed(2)}</span></div>`;
+  if (disc > 0) {
+    html += `<div class="os-row" style="color:var(--forest);font-weight:600"><span>Promo (${appliedPromo.code})</span><span>−$${disc.toFixed(2)}</span></div>`;
+  }
+  html += `<div class="os-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>`;
+  document.getElementById('os-totals').innerHTML = html;
+
+  const freeMsg = document.getElementById('os-free-msg');
+  if (freeMsg) {
+    freeMsg.textContent = sub < DELIVERY.freeThreshold
+      ? `Add $${(DELIVERY.freeThreshold-sub).toFixed(2)} more for free delivery`
+      : '';
+  }
+}
+
+// ── MAIN ─────────────────────────────────────────────────────
+const cart = getCart();
+if (!cart.length) {
+  document.getElementById('empty-co').style.display = 'block';
+  document.getElementById('co-layout').style.display = 'none';
+} else {
+  // Order summary items
+  document.getElementById('os-items').innerHTML = cart.map(i => {
+    const imgEl = i.image ? `<img src="${i.image}" alt="${i.name}">` : `<span>${i.emoji}</span>`;
     return `<div class="os-item"><div class="os-emoji">${imgEl}</div><div class="os-info"><div class="os-name">${i.name}</div><div class="os-meta">${i.lbs}lb &times; $${i.pricePerLb.toFixed(2)}/lb</div></div><div class="os-price">$${(i.pricePerLb*i.lbs).toFixed(2)}</div></div>`;
   }).join('');
 
-  document.getElementById('os-totals').innerHTML=`
-    <div class="os-row"><span>Subtotal</span><span>$${sub.toFixed(2)}</span></div>
-    <div class="os-row"><span>Delivery</span><span>${del===0?'🎉 Free':'$'+del.toFixed(2)}</span></div>
-    <div class="os-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>`;
-
-  if(sub<DELIVERY.freeThreshold)
-    document.getElementById('os-free-msg').textContent=`Add $${(DELIVERY.freeThreshold-sub).toFixed(2)} more for free delivery`;
-
-  // Delivery slots
-  const now=new Date();
-  const pastCutoff=now.getHours()>=DELIVERY.cutoffHour;
-  const slots=[];const d=new Date(now);
-  d.setDate(d.getDate()+(pastCutoff?2:1));
-  while(slots.length<6){if(d.getDay()!==1)slots.push(d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}));d.setDate(d.getDate()+1)}
-  let selectedDate=slots[0];
-  document.getElementById('slot-grid').innerHTML=slots.map((s,i)=>`<button class="slot-btn ${i===0?'sel':''}" onclick="selectSlot(this,'${s}')">${s}</button>`).join('');
-  function selectSlot(el,date){document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');selectedDate=date}
+  renderTotals();
+  renderDeliverySlots();
 
   // ZIP warning
-  document.getElementById('f-zip')?.addEventListener('blur',function(){
-    const warn=document.getElementById('zip-warn');if(!warn)return;
-    this.value.length===5&&!SERVICE_ZIPS.includes(this.value.trim())?warn.classList.add('show'):warn.classList.remove('show');
+  document.getElementById('f-zip')?.addEventListener('blur', function() {
+    const warn = document.getElementById('zip-warn'); if(!warn) return;
+    this.value.length===5 && !isDeliverableZip(this.value.trim())
+      ? warn.classList.add('show')
+      : warn.classList.remove('show');
   });
 
   // PLACE ORDER
-  document.getElementById('place-btn')?.addEventListener('click',async function(){
-    const btn=this;const errEl=document.getElementById('error-msg');
-    errEl.classList.remove('show');errEl.textContent='';
+  document.getElementById('place-btn')?.addEventListener('click', async function() {
+    const btn   = this;
+    const errEl = document.getElementById('error-msg');
+    errEl.classList.remove('show'); errEl.textContent = '';
 
-    const name=document.getElementById('f-name')?.value.trim();
-    const phone=document.getElementById('f-phone')?.value.trim();
-    const email=document.getElementById('f-email')?.value.trim();
-    const street=document.getElementById('f-street')?.value.trim();
-    const apt=document.getElementById('f-apt')?.value.trim();
-    const city=document.getElementById('f-city')?.value.trim();
-    const state=document.getElementById('f-state')?.value.trim()||'TX';
-    const zip=document.getElementById('f-zip')?.value.trim();
-    const notes=document.getElementById('f-notes')?.value.trim();
+    const name   = document.getElementById('f-name')?.value.trim();
+    const phone  = document.getElementById('f-phone')?.value.trim();
+    const email  = document.getElementById('f-email')?.value.trim();
+    const street = document.getElementById('f-street')?.value.trim();
+    const apt    = document.getElementById('f-apt')?.value.trim();
+    const city   = document.getElementById('f-city')?.value.trim();
+    const state  = document.getElementById('f-state')?.value.trim() || 'TX';
+    const zip    = document.getElementById('f-zip')?.value.trim();
+    const notes  = document.getElementById('f-notes')?.value.trim();
 
-    const missing=[];
-    if(!name)missing.push('Full Name');
-    if(!phone)missing.push('Phone');
-    if(!email||!email.includes('@'))missing.push('Valid Email');
-    if(!street)missing.push('Street Address');
-    if(!city)missing.push('City');
-    if(!zip||zip.length!==5)missing.push('ZIP Code (5 digits)');
+    const missing = [];
+    if (!name)                          missing.push('Full Name');
+    if (!phone)                         missing.push('Phone');
+    if (!email || !email.includes('@')) missing.push('Valid Email');
+    if (!street)                        missing.push('Street Address');
+    if (!city)                          missing.push('City');
+    if (!zip || zip.length !== 5)       missing.push('ZIP Code (5 digits)');
+    if (!selectedDeliveryDate)          missing.push('Delivery Date');
 
-    if(missing.length){
-      errEl.textContent='Please fill in: '+missing.join(', ');
+    if (missing.length) {
+      errEl.textContent = 'Please fill in: ' + missing.join(', ');
       errEl.classList.add('show');
       window.scrollTo({top:0,behavior:'smooth'});
       return;
     }
 
-    btn.disabled=true;btn.textContent='⏳ Redirecting to payment...';
+    const deliveryDateStr = formatDeliveryDateFull(selectedDeliveryDate);
+    const sub  = parseFloat(cartSubtotal().toFixed(2));
+    const disc = appliedPromo ? promoDiscountAmount(appliedPromo, sub) : 0;
 
-    try{
-      const res=await fetch('/api/create-checkout',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          cartItems:getCart().map(i=>{return{id:i.id,lbs:i.lbs}}),
-          customerInfo:{name,phone,email,street,apt,city,state,zip,notes,deliveryDate:selectedDate}
+    btn.disabled = true; btn.textContent = '⏳ Redirecting to payment...';
+
+    try {
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cartItems:    getCart().map(i => ({ id: i.id, lbs: i.lbs })),
+          customerInfo: { name, phone, email, street, apt, city, state, zip, notes, deliveryDate: deliveryDateStr },
+          promoCode:    appliedPromo ? appliedPromo.code : null,
+          discount:     disc,
         })
       });
 
-      const data=await res.json();
-      if(!res.ok||!data.url)throw new Error(data.error||'Failed to create checkout. Please try again.');
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error || 'Failed to create checkout. Please try again.');
 
-      // Save order for confirmation page
-      localStorage.setItem('mhs_pending_order',JSON.stringify({
-        name,phone,email,street,apt,city,state,zip,notes,
-        deliveryDate:selectedDate,
-        items:getCart(),
-        orderId:data.orderId
+      localStorage.setItem('mhs_pending_order', JSON.stringify({
+        name, phone, email, street, apt, city, state, zip, notes,
+        deliveryDate: deliveryDateStr,
+        items:        getCart(),
+        orderId:      data.orderId,
+        promoCode:    appliedPromo ? appliedPromo.code : null,
+        discount:     disc,
       }));
 
-      window.location.href=data.url;
+      window.location.href = data.url;
 
-    }catch(err){
-      btn.disabled=false;btn.innerHTML='🔒 Place Order &amp; Pay';
-      errEl.textContent=err.message;errEl.classList.add('show');
+    } catch(err) {
+      btn.disabled = false; btn.innerHTML = '🔒 Place Order &amp; Pay';
+      errEl.textContent = err.message; errEl.classList.add('show');
       window.scrollTo({top:0,behavior:'smooth'});
     }
   });
