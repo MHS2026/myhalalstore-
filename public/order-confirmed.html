@@ -228,9 +228,11 @@ Address: ${[order.street, order.apt, order.city].filter(Boolean).join(', ')}\``)
   }
 }
 
-// Clear pending order from localStorage after displaying
-// (small delay so page renders first)
-setTimeout(() => localStorage.removeItem('mhs_pending_order'), 3000);
+// Clear cart and pending order after successful display
+setTimeout(() => {
+  localStorage.removeItem('mhs_pending_order');
+  localStorage.removeItem('mhs_cart');
+}, 3000);
 
 </script>
 </body>

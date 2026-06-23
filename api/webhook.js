@@ -57,7 +57,9 @@ export default async function handler(req, res) {
     const subtotal     = (session.metadata?.subtotal    || (session.amount_total / 100)).toString()
     const deliveryFee  = session.metadata?.deliveryFee  || '8.99'
     const orderId      = session.metadata?.orderId      || 'MHS-' + session.id.slice(-8).toUpperCase()
-    const deliveryDate = session.metadata?.deliveryDate || ''   // ← ADDED
+    const deliveryDate  = session.metadata?.deliveryDate  || ''
+    const deliveryNotes = session.metadata?.deliveryNotes || ''
+    const tip           = session.metadata?.tip           || '0.00'
 
     const payload = {
       orderId,
@@ -67,7 +69,9 @@ export default async function handler(req, res) {
       address       : address.line1 || session.metadata?.deliveryAddress || '',
       city          : address.city  || '',
       zip           : address.postal_code || '',
-      deliveryDate,                                              // ← ADDED
+      deliveryDate,
+      deliveryNotes,
+      tip,
       items,
       subtotal,
       deliveryFee,

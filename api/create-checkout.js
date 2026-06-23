@@ -100,6 +100,7 @@ module.exports = async function handler(req, res) {
         deliveryAddress,
         deliveryDate:    customerInfo.deliveryDate  || "",   // ← ADDED
         deliveryNotes:   customerInfo.notes         || "",
+        tip:             (body.tip                 || 0).toFixed(2),
         subtotal:        subtotal.toFixed(2),
         deliveryFee:     deliveryFee.toFixed(2),
         grandTotal:      grandTotal.toFixed(2),
