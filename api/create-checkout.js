@@ -49,7 +49,8 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: `Minimum order is $${DELIVERY.minOrder}. Your subtotal is $${subtotal.toFixed(2)}.` })
 
     const deliveryFee = subtotal >= DELIVERY.freeThreshold ? 0 : DELIVERY.fee
-    const grandTotal = parseFloat((subtotal + deliveryFee).toFixed(2))
+    const tip = parseFloat(parseFloat(req.body.tip || 0).toFixed(2))
+    const grandTotal = parseFloat((subtotal + deliveryFee + tip).toFixed(2))
 
     // ── STRIPE LINE ITEMS ──
     const lineItems = validatedItems.map(item => ({
@@ -78,6 +79,21 @@ module.exports = async function handler(req, res) {
       })
     }
 
+    // Add tip as Stripe line item if present
+    if (tip > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "💚 Tip for Driver",
+            description: "Thank you for your generosity!",
+          },
+          unit_amount: Math.round(tip * 100),
+        },
+        quantity: 1,
+      })
+    }
+
     const orderId = "MHS-" + Date.now().toString(36).toUpperCase()
     const deliveryAddress = [
       customerInfo.street,
@@ -100,7 +116,7 @@ module.exports = async function handler(req, res) {
         deliveryAddress,
         deliveryDate:    customerInfo.deliveryDate  || "",   // ← ADDED
         deliveryNotes:   customerInfo.notes         || "",
-        tip:             (body.tip                 || 0).toFixed(2),
+        tip:             tip.toFixed(2),
         subtotal:        subtotal.toFixed(2),
         deliveryFee:     deliveryFee.toFixed(2),
         grandTotal:      grandTotal.toFixed(2),
