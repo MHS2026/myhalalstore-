@@ -115,6 +115,7 @@ module.exports = async function handler(req, res) {
         customerPhone:   customerInfo.phone,
         deliveryAddress,
         deliveryDate:    customerInfo.deliveryDate  || "",   // ← ADDED
+        promoCode:       (req.body.promoCode        || "").toUpperCase(),
         deliveryNotes:   customerInfo.notes         || "",
         tip:             tip.toFixed(2),
         subtotal:        subtotal.toFixed(2),

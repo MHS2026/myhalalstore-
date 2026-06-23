@@ -247,17 +247,19 @@ let tipAmount = 0;
 let activeTipMode = null;
 
 function applyPromo() {
-  const input  = document.getElementById('f-promo');
-  const msgEl  = document.getElementById('promo-msg');
-  const sub    = parseFloat(cartSubtotal().toFixed(2));
-  const result = validatePromo(input.value, sub);
+  const input     = document.getElementById('f-promo');
+  const msgEl     = document.getElementById('promo-msg');
+  const applyBtn  = document.getElementById('promo-apply-btn');
+  const removeBtn = document.getElementById('promo-remove-btn');
+  const sub       = parseFloat(cartSubtotal().toFixed(2));
+  const result    = validatePromo(input.value, sub);
 
   msgEl.style.display = 'block';
   if (result.valid) {
-    appliedPromo       = result;
-    const del          = cartDelivery(sub);
-    const amt          = promoDiscountAmount(result, sub, del);
-    msgEl.style.color  = 'var(--forest)';
+    appliedPromo      = result;
+    const del         = cartDelivery(sub);
+    const amt         = promoDiscountAmount(result, sub, del);
+    msgEl.style.color = 'var(--forest)';
     let amtLabel;
     if (result.type === 'freeDelivery') {
       amtLabel = del === 0
@@ -266,18 +268,16 @@ function applyPromo() {
     } else {
       amtLabel = ' (−$' + amt.toFixed(2) + ')';
     }
-    msgEl.textContent  = '✅ ' + result.label + amtLabel;
-    input.value        = result.code;
-    input.disabled     = true;
-    const removeBtn = document.getElementById('promo-remove-btn');
-    const applyBtn  = document.getElementById('promo-apply-btn');
+    msgEl.textContent = '✅ ' + result.label + amtLabel;
+    input.value       = result.code;
+    input.disabled    = true;
     if (removeBtn) removeBtn.style.display = 'inline-block';
     if (applyBtn)  applyBtn.style.display  = 'none';
     renderTotals();
   } else {
-    appliedPromo       = null;
-    msgEl.style.color  = 'var(--red)';
-    msgEl.textContent  = '❌ ' + result.error;
+    appliedPromo      = null;
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = '❌ ' + result.error;
     renderTotals();
   }
 }
