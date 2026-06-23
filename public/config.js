@@ -47,7 +47,7 @@ const DELIVERY_SCHEDULE = {
 // =============================================================
 const PROMO_CODES = {
   'WELCOME10': { discount: 0.10, type: 'percent', minOrder: 35,  label: '10% off your order'   },
-  'FREESHIP':  { discount: 8.99, type: 'flat',    minOrder: 35,  label: 'Free delivery'          },
+  'FREESHIP':  { discount: 0,    type: 'freeDelivery', minOrder: 0, label: 'Free delivery', maxUses: 3 },
   'EID20':     { discount: 0.20, type: 'percent', minOrder: 100, label: '20% off orders $100+'   },
   // Add more codes here. Keys are case-insensitive.
 };
@@ -376,13 +376,24 @@ function validatePromo(inputCode, subtotal) {
     return { valid: false, error: `This code requires a minimum order of $${promo.minOrder.toFixed(2)}.` };
   }
 
+  // Per-device usage limit
+  if (promo.maxUses) {
+    try {
+      const uses = JSON.parse(localStorage.getItem('mhs_promo_uses') || '{}');
+      if ((uses[match] || 0) >= promo.maxUses) {
+        return { valid: false, error: 'This promo code has reached its limit on this device.' };
+      }
+    } catch(e) {}
+  }
+
   return { valid: true, code: match, ...promo };
 }
 
 // Calculate discount $ amount from a validated promo object
-function promoDiscountAmount(promo, subtotal) {
+function promoDiscountAmount(promo, subtotal, deliveryFee) {
   if (!promo || !promo.valid) return 0;
-  if (promo.type === 'percent') return parseFloat((subtotal * promo.discount).toFixed(2));
-  if (promo.type === 'flat')    return Math.min(promo.discount, subtotal);
+  if (promo.type === 'percent')     return parseFloat((subtotal * promo.discount).toFixed(2));
+  if (promo.type === 'flat')        return Math.min(promo.discount, subtotal);
+  if (promo.type === 'freeDelivery') return (deliveryFee !== undefined ? deliveryFee : 0);
   return 0;
 }

@@ -82,6 +82,14 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 .os-row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:6px}
 .os-row.promo{color:var(--forest);font-weight:600}
 .os-total{display:flex;justify-content:space-between;font-size:17px;font-weight:700;color:var(--ink);border-top:1px solid var(--border);padding-top:10px;margin-top:3px;margin-bottom:14px}
+.tip-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.tip-label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.tip-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tip-btn{background:var(--cream);border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--forest);transition:all .15s}
+.tip-btn.active{background:var(--forest);color:#fff;border-color:var(--forest)}
+.tip-custom{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;display:none}
+.tip-custom.show{display:block}
+.os-row.tip{color:var(--forest);font-weight:600}
 .place-btn{width:100%;padding:14px;background:var(--forest);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
 .place-btn:hover:not(:disabled){background:var(--gold)}
 .place-btn:disabled{opacity:.45;cursor:not-allowed}
@@ -166,6 +174,23 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
       <div id="promo-msg" style="margin-top:8px;font-size:13px;display:none"></div>
     </div>
 
+    <!-- TIP -->
+    <div class="co-sec">
+      <h2>💚 Leave a Tip</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">100% goes to your delivery driver. Totally optional!</p>
+      <div class="tip-btns">
+        <button class="tip-btn" onclick="setTip('fixed',0)" id="tip-0">No tip</button>
+        <button class="tip-btn" onclick="setTip('fixed',1)" id="tip-1">$1</button>
+        <button class="tip-btn" onclick="setTip('fixed',2)" id="tip-2">$2</button>
+        <button class="tip-btn" onclick="setTip('fixed',3)" id="tip-3">$3</button>
+        <button class="tip-btn" onclick="setTip('pct',10)" id="tip-10">10%</button>
+        <button class="tip-btn" onclick="setTip('pct',15)" id="tip-15">15%</button>
+        <button class="tip-btn" onclick="setTip('pct',20)" id="tip-20">20%</button>
+        <button class="tip-btn" onclick="setTip('custom')" id="tip-custom-btn">Custom</button>
+      </div>
+      <input type="number" id="tip-custom-input" class="tip-custom" placeholder="Enter custom tip ($)" min="0" step="0.50" oninput="setTip('customVal',parseFloat(this.value)||0)">
+    </div>
+
     <!-- PAYMENT -->
     <div class="co-sec">
       <h2>💳 Payment</h2>
@@ -217,6 +242,8 @@ if (new URLSearchParams(window.location.search).get('cancelled') === 'true') {
 
 // ── PROMO STATE ───────────────────────────────────────────────
 let appliedPromo = null;
+let tipAmount = 0;
+let activeTipMode = null;
 
 function applyPromo() {
   const input  = document.getElementById('f-promo');
@@ -227,9 +254,11 @@ function applyPromo() {
   msgEl.style.display = 'block';
   if (result.valid) {
     appliedPromo       = result;
-    const amt          = promoDiscountAmount(result, sub);
+    const del          = cartDelivery(sub);
+    const amt          = promoDiscountAmount(result, sub, del);
     msgEl.style.color  = 'var(--forest)';
-    msgEl.textContent  = '✅ ' + result.label + ' (−$' + amt.toFixed(2) + ')';
+    const amtLabel     = result.type === 'freeDelivery' ? ' (delivery waived!)' : ' (−$' + amt.toFixed(2) + ')';
+    msgEl.textContent  = '✅ ' + result.label + amtLabel;
     input.value        = result.code;
     input.disabled     = true;
     renderTotals();
@@ -239,6 +268,44 @@ function applyPromo() {
     msgEl.textContent  = '❌ ' + result.error;
     renderTotals();
   }
+}
+
+
+function setTip(mode, val) {
+  const sub = parseFloat(cartSubtotal().toFixed(2));
+  const customInput = document.getElementById('tip-custom-input');
+  
+  // Clear all active states
+  ['tip-0','tip-1','tip-2','tip-3','tip-10','tip-15','tip-20','tip-custom-btn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  if (customInput) customInput.classList.remove('show');
+
+  if (mode === 'custom') {
+    activeTipMode = 'custom';
+    const btn = document.getElementById('tip-custom-btn');
+    if (btn) btn.classList.add('active');
+    if (customInput) { customInput.classList.add('show'); customInput.focus(); }
+    tipAmount = parseFloat(customInput?.value) || 0;
+  } else if (mode === 'customVal') {
+    tipAmount = Math.max(0, val);
+    activeTipMode = 'custom';
+    const btn = document.getElementById('tip-custom-btn');
+    if (btn) btn.classList.add('active');
+    if (customInput) customInput.classList.add('show');
+  } else if (mode === 'pct') {
+    tipAmount = parseFloat((sub * val / 100).toFixed(2));
+    activeTipMode = 'pct_' + val;
+    const btn = document.getElementById('tip-' + val);
+    if (btn) btn.classList.add('active');
+  } else {
+    tipAmount = val;
+    activeTipMode = 'fixed_' + val;
+    const btn = document.getElementById('tip-' + val);
+    if (btn) btn.classList.add('active');
+  }
+  renderTotals();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -296,23 +363,39 @@ function selectSlot(el, iso) {
 
 // ── TOTALS RENDERER ───────────────────────────────────────────
 function renderTotals() {
-  const sub   = parseFloat(cartSubtotal().toFixed(2));
-  const del   = cartDelivery(sub);
-  const disc  = appliedPromo ? promoDiscountAmount(appliedPromo, sub) : 0;
-  const total = Math.max(0, parseFloat((sub + del - disc).toFixed(2)));
+  const sub  = parseFloat(cartSubtotal().toFixed(2));
+  let   del  = cartDelivery(sub);
+
+  // Handle freeDelivery promo type
+  let disc = 0;
+  let delDisplay = del;
+  if (appliedPromo) {
+    if (appliedPromo.type === 'freeDelivery') {
+      disc = del;      // entire delivery fee is discounted
+      delDisplay = del; // still show original delivery fee crossed off
+    } else {
+      disc = promoDiscountAmount(appliedPromo, sub, del);
+    }
+  }
+
+  const tip   = parseFloat((tipAmount || 0).toFixed(2));
+  const total = Math.max(0, parseFloat((sub + del - disc + tip).toFixed(2)));
 
   let html = `
     <div class="os-row"><span>Subtotal</span><span>$${sub.toFixed(2)}</span></div>
     <div class="os-row"><span>Delivery</span><span>${del === 0 ? '🎉 Free' : '$' + del.toFixed(2)}</span></div>`;
 
   if (disc > 0) {
-    html += `<div class="os-row promo"><span>Promo (${appliedPromo.code})</span><span>−$${disc.toFixed(2)}</span></div>`;
+    const label = appliedPromo.type === 'freeDelivery' ? 'Free Delivery Promo' : `Promo (${appliedPromo.code})`;
+    html += `<div class="os-row promo"><span>${label}</span><span>−$${disc.toFixed(2)}</span></div>`;
+  }
+  if (tip > 0) {
+    html += `<div class="os-row tip"><span>Tip 💚</span><span>$${tip.toFixed(2)}</span></div>`;
   }
 
   html += `<div class="os-total"><span>Total</span><span>$${total.toFixed(2)}</span></div>`;
   document.getElementById('os-totals').innerHTML = html;
 
-  // Update place button label with final total
   const placeBtn = document.getElementById('place-btn');
   if (placeBtn && !placeBtn.disabled) {
     placeBtn.innerHTML = `🔒 Place Order &amp; Pay — $${total.toFixed(2)}`;
@@ -320,7 +403,7 @@ function renderTotals() {
 
   const freeMsg = document.getElementById('os-free-msg');
   if (freeMsg) {
-    freeMsg.textContent = sub > 0 && sub < DELIVERY.freeThreshold
+    freeMsg.textContent = sub > 0 && sub < DELIVERY.freeThreshold && (!appliedPromo || appliedPromo.type !== 'freeDelivery')
       ? `Add $${(DELIVERY.freeThreshold - sub).toFixed(2)} more for free delivery 🎉`
       : '';
   }
@@ -394,8 +477,11 @@ if (!cart.length) {
     const deliveryDateStr = formatDeliveryDateFull(selectedDeliveryDate);
     const sub  = parseFloat(cartSubtotal().toFixed(2));
     const del  = cartDelivery(sub);
-    const disc = appliedPromo ? promoDiscountAmount(appliedPromo, sub) : 0;
-    const total = Math.max(0, parseFloat((sub + del - disc).toFixed(2)));
+    const disc = appliedPromo
+      ? (appliedPromo.type === 'freeDelivery' ? del : promoDiscountAmount(appliedPromo, sub, del))
+      : 0;
+    const tip   = parseFloat((tipAmount || 0).toFixed(2));
+    const total = Math.max(0, parseFloat((sub + del - disc + tip).toFixed(2)));
 
     btn.disabled = true;
     btn.textContent = '⏳ Redirecting to payment...';
@@ -412,6 +498,7 @@ if (!cart.length) {
           // Pass final totals so backend can verify/use directly
           subtotal:     sub,
           deliveryFee:  del,
+          tip:          tip,
           totalCharged: total,
         })
       });
@@ -420,6 +507,15 @@ if (!cart.length) {
       if (!res.ok || !data.url) throw new Error(data.error || 'Failed to create checkout. Please try again.');
 
       // Save order details for order-confirmed.html
+      // Track per-device promo usage
+      if (appliedPromo && appliedPromo.maxUses) {
+        try {
+          const uses = JSON.parse(localStorage.getItem('mhs_promo_uses') || '{}');
+          uses[appliedPromo.code] = (uses[appliedPromo.code] || 0) + 1;
+          localStorage.setItem('mhs_promo_uses', JSON.stringify(uses));
+        } catch(e) {}
+      }
+
       localStorage.setItem('mhs_pending_order', JSON.stringify({
         name, phone, email, street, apt, city, state, zip, notes,
         deliveryDate: deliveryDateStr,
@@ -427,6 +523,7 @@ if (!cart.length) {
         orderId:      data.orderId,
         promoCode:    appliedPromo ? appliedPromo.code : null,
         discount:     disc,
+        tip:          tip,
       }));
 
       window.location.href = data.url;

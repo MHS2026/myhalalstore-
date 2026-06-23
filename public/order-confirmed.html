@@ -176,7 +176,9 @@ if (order) {
     const sub  = parseFloat(order.items.reduce((s, i) => s + i.pricePerLb * i.lbs, 0).toFixed(2));
     const del  = sub >= feeThreshold ? 0 : deliveryFee;
     const disc = parseFloat((order.discount || 0).toFixed(2));
-    const paid = parseFloat(Math.max(0, sub + del - disc).toFixed(2));
+    const paid = parseFloat(Math.max(0, sub + del - disc + (order.tip || 0)).toFixed(2));
+
+    const tip = parseFloat((order.tip || 0).toFixed(2));
 
     let html = `
       <div class="total-row"><span>Subtotal</span><span>$${sub.toFixed(2)}</span></div>
@@ -184,6 +186,9 @@ if (order) {
 
     if (disc > 0 && order.promoCode) {
       html += `<div class="total-row promo"><span>Promo (${order.promoCode})</span><span>−$${disc.toFixed(2)}</span></div>`;
+    }
+    if (tip > 0) {
+      html += `<div class="total-row" style="color:var(--forest);font-weight:600"><span>Tip 💚</span><span>$${tip.toFixed(2)}</span></div>`;
     }
 
     html += `<div class="total-row final"><span>Total Paid</span><span>$${paid.toFixed(2)}</span></div>`;
