@@ -80,6 +80,19 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 .carousel-track{display:flex;gap:24px;transition:transform .45s cubic-bezier(.25,.46,.45,.94)}
 .product-card{flex:0 0 calc((100% - 48px)/3);background:var(--warm);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:box-shadow .2s,transform .15s}
 .product-card:hover{box-shadow:0 12px 40px rgba(28,56,41,.1);transform:translateY(-3px)}
+/* Carousel product cards — match shop page */
+.pcard{background:var(--warm);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .2s,transform .15s}
+.pcard:hover{box-shadow:0 10px 36px rgba(28,56,41,.10);transform:translateY(-2px)}
+.pcard-img{background:linear-gradient(135deg,var(--cream),var(--mist));height:180px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden}
+.pcard-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.pcard-body{padding:14px}
+.pcard-cat{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.pcard-name{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.pcard-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.pcard-price{font-family:'Georgia',serif;font-size:20px;font-weight:700;color:var(--forest)}
+.pcard-price small{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--muted)}
+.hp-add-btn{background:var(--forest);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
+.hp-add-btn:hover{background:var(--forest-dk,#0a1710)}
 .product-img{background:linear-gradient(135deg,var(--cream),var(--mist));height:180px;display:flex;align-items:center;justify-content:center;font-size:72px;position:relative;overflow:hidden}
 .product-tag{position:absolute;top:10px;left:10px;background:var(--forest);color:var(--gold-lt);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;text-transform:uppercase}
 .product-body{padding:18px}
@@ -539,15 +552,23 @@ updateBadge();
     track.innerHTML = '';
 
     favs.forEach(function(p) {
-      var price = p.pricePerLb ? '$' + p.pricePerLb.toFixed(2) + '/lb' : '';
+      var dollars = Math.floor(p.pricePerLb);
+      var cents = (p.pricePerLb % 1 * 100).toFixed(0).padStart(2, '0');
+      var priceStr = '$' + dollars + (cents !== '00' ? '.' + cents : '') + '<small>/lb</small>';
+      var imgHtml = p.image
+        ? '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy">'
+        : '<span>' + (p.emoji || '') + '</span>';
       var card = document.createElement('div');
-      card.className = 'product-card';
+      card.className = 'pcard';
       card.innerHTML =
-        '<div class="product-img-wrap"><img src="' + (p.image||'') + '" alt="' + p.name + '" loading="lazy"></div>'
-        + '<div class="product-info">'
-        + '<h3 class="product-name">' + p.name + '</h3>'
-        + '<p class="product-price">' + price + '</p>'
-        + '<button class="btn btn-primary add-to-cart" data-id="' + p.id + '">Add to Cart</button>'
+        '<div class="pcard-img">' + imgHtml + '</div>'
+        + '<div class="pcard-body">'
+        + '<div class="pcard-cat">' + (p.categoryLabel || p.category || '') + '</div>'
+        + '<div class="pcard-name">' + p.name + '</div>'
+        + '<div class="pcard-footer">'
+        + '<div class="pcard-price">' + priceStr + '</div>'
+        + '<button class="hp-add-btn add-to-cart" data-id="' + p.id + '">Add to Cart</button>'
+        + '</div>'
         + '</div>';
       track.appendChild(card);
     });
