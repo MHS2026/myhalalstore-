@@ -46,7 +46,7 @@ const DELIVERY_SCHEDULE = {
 // minOrder: minimum subtotal required to use the code
 // =============================================================
 const PROMO_CODES = {
-  'WELCOME10': { discount: 0.10, type: 'percent', minOrder: 35,  label: '10% off your order'   },
+  'WELCOME10': { discount: 0.10, type: 'percent', minOrder: 35,  label: '10% off your order', maxDiscount: 10 },
   'FREESHIP':  { discount: 0,    type: 'freeDelivery', minOrder: 0, label: 'Free delivery', maxUses: 3 },
   'EID20':     { discount: 0.20, type: 'percent', minOrder: 100, label: '20% off orders $100+'   },
   // Add more codes here. Keys are case-insensitive.
@@ -392,7 +392,10 @@ function validatePromo(inputCode, subtotal) {
 // Calculate discount $ amount from a validated promo object
 function promoDiscountAmount(promo, subtotal, deliveryFee) {
   if (!promo || !promo.valid) return 0;
-  if (promo.type === 'percent')     return parseFloat((subtotal * promo.discount).toFixed(2));
+  if (promo.type === 'percent') {
+    const raw = parseFloat((subtotal * promo.discount).toFixed(2));
+    return promo.maxDiscount ? Math.min(raw, promo.maxDiscount) : raw;
+  }
   if (promo.type === 'flat')        return Math.min(promo.discount, subtotal);
   if (promo.type === 'freeDelivery') return (deliveryFee !== undefined ? deliveryFee : 0);
   return 0;

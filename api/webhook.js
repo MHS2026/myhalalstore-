@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     const address  = shipping.address || {}
     const name     = shipping.name || session.customer_details?.name || ''
     const email    = session.customer_details?.email || ''
-    const phone    = session.customer_details?.phone || ''
+    const phone    = session.metadata?.customerPhone || session.customer_details?.phone || ''
 
     // Extract line items from metadata (set during checkout creation)
     let items = []
