@@ -59,30 +59,10 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 @media(max-width:768px){.nav{padding:0 20px}.nav-links{display:none}}
 
 /* HERO */
-@keyframes heroFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-18px) rotate(2deg)}}
-@keyframes heroBadge1{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-@keyframes heroBadge2{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-@keyframes heroBadge3{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes heroGlow{0%,100%{box-shadow:0 0 60px 20px rgba(184,134,11,.18),0 0 120px 40px rgba(28,80,50,.25)}50%{box-shadow:0 0 80px 30px rgba(184,134,11,.30),0 0 160px 60px rgba(28,80,50,.35)}}
-@keyframes heroRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 .hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden;background:#0E1E15}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(14,30,21,.95) 0%,rgba(14,30,21,.70) 48%,rgba(14,30,21,.05) 100%);z-index:1}
-.hero-left{padding:80px 64px 80px 80px;position:relative;z-index:2;max-width:560px;flex-shrink:0}
-/* HERO RIGHT */
-.hero-right{position:relative;z-index:2;flex:1;display:flex;align-items:center;justify-content:center;min-height:92vh}
-.hero-plate{position:relative;width:340px;height:340px}
-.hero-plate-circle{width:340px;height:340px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(45,100,65,.5),rgba(14,30,21,.8));border:2px solid rgba(184,134,11,.25);animation:heroGlow 4s ease-in-out infinite;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.hero-plate-ring{position:absolute;inset:-12px;border-radius:50%;border:2px dashed rgba(184,134,11,.2);animation:heroRing 20s linear infinite}
-.hero-plate-emoji{font-size:130px;animation:heroFloat 5s ease-in-out infinite;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5));line-height:1}
-.hero-badge{position:absolute;background:rgba(14,30,21,.85);backdrop-filter:blur(12px);border:1px solid rgba(184,134,11,.3);border-radius:14px;padding:10px 16px;color:#fff;display:flex;align-items:center;gap:10px;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.hero-badge .hb-icon{font-size:22px}
-.hero-badge .hb-text{display:flex;flex-direction:column}
-.hero-badge .hb-label{font-size:10px;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:1px;text-transform:uppercase}
-.hero-badge .hb-val{font-size:14px;font-weight:700;color:var(--gold-lt)}
-.hb1{top:-10px;left:-30px;animation:heroBadge1 4s ease-in-out infinite}
-.hb2{bottom:10px;left:-50px;animation:heroBadge2 5s ease-in-out infinite 0.5s}
-.hb3{top:60px;right:-40px;animation:heroBadge3 4.5s ease-in-out infinite 1s}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(14,30,21,.92) 0%,rgba(14,30,21,.60) 50%,rgba(14,30,21,.10) 100%);z-index:1}
+.hero-left{padding:80px 64px 80px 80px;position:relative;z-index:2;max-width:620px}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(184,134,11,.15);border:1px solid rgba(184,134,11,.35);color:var(--gold-lt);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:28px}
 .hero-left h1{font-size:66px;font-weight:700;color:#fff;margin-bottom:22px;letter-spacing:-1px}
 .hero-left h1 em{font-style:normal;color:var(--gold-lt)}
@@ -271,36 +251,6 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
       <a href="https://wa.me/10000000000" class="btn-outline" target="_blank" rel="noopener">💬 WhatsApp</a>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="hero-plate">
-      <div class="hero-plate-ring"></div>
-      <div class="hero-plate-circle">
-        <div class="hero-plate-emoji">🥩</div>
-      </div>
-      <!-- Floating badges -->
-      <div class="hero-badge hb1">
-        <span class="hb-icon">☪</span>
-        <div class="hb-text">
-          <span class="hb-label">Certified</span>
-          <span class="hb-val">100% Halal</span>
-        </div>
-      </div>
-      <div class="hero-badge hb2">
-        <span class="hb-icon">🚚</span>
-        <div class="hb-text">
-          <span class="hb-label">Delivery</span>
-          <span class="hb-val">Tue · Thu · Sat</span>
-        </div>
-      </div>
-      <div class="hero-badge hb3">
-        <span class="hb-icon">🌿</span>
-        <div class="hb-text">
-          <span class="hb-label">Always</span>
-          <span class="hb-val">Fresh & Pure</span>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- USP STRIP -->
@@ -437,7 +387,7 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 </footer>
 
 
-<script src="/config.js"></script>
+<script src="config.js"></script>
 <script>
 
 
@@ -450,16 +400,15 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
   let W, H, scrollY = 0, t = 0;
   let cuts = [];
 
-  // Color palette — deep greens, warm golds, cream
   const palette = [
-    { r: 28,  g: 80,  b: 50  },  // forest green
-    { r: 20,  g: 55,  b: 35  },  // deep green
-    { r: 45,  g: 100, b: 65  },  // mid green
-    { r: 184, g: 134, b: 11  },  // gold
-    { r: 212, g: 168, b: 67  },  // light gold
-    { r: 35,  g: 65,  b: 45  },  // dark green
-    { r: 100, g: 60,  b: 20  },  // warm brown (marbling)
-    { r: 140, g: 90,  b: 30  },  // amber
+    { r: 28,  g: 80,  b: 50  },
+    { r: 20,  g: 55,  b: 35  },
+    { r: 45,  g: 100, b: 65  },
+    { r: 184, g: 134, b: 11  },
+    { r: 212, g: 168, b: 67  },
+    { r: 35,  g: 65,  b: 45  },
+    { r: 100, g: 60,  b: 20  },
+    { r: 140, g: 90,  b: 30  },
   ];
 
   function resize() {
@@ -468,8 +417,6 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
     initCuts();
   }
 
-  // Each "cut" is a flowing ribbon across the canvas
-  // inspired by cross-sections of meat marbling — organic, flowing curves
   function initCuts() {
     cuts = [];
     const count = Math.floor(W / 60) + 8;
@@ -478,13 +425,13 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
       cuts.push({
         x: (i / count) * W * 1.4 - W * 0.2,
         speed: 0.15 + Math.random() * 0.25,
-        width: 40 + Math.random() * 120,
-        amplitude: 60 + Math.random() * 160,
+        width: 60 + Math.random() * 160,
+        amplitude: 80 + Math.random() * 180,
         freq: 0.003 + Math.random() * 0.005,
         phase: Math.random() * Math.PI * 2,
         phase2: Math.random() * Math.PI * 2,
         r: col.r, g: col.g, b: col.b,
-        alpha: 0.12 + Math.random() * 0.25,
+        alpha: 0.35 + Math.random() * 0.30,
         drift: (Math.random() - 0.5) * 0.3,
       });
     }
@@ -492,8 +439,6 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
-
-    // Deep background
     const bg = ctx.createLinearGradient(0, 0, W, H);
     bg.addColorStop(0, '#0B1810');
     bg.addColorStop(0.5, '#121F15');
@@ -501,21 +446,13 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    // Scroll parallax offset
     const scrollOffset = scrollY * 0.3;
 
-    // Draw marbling ribbons
     cuts.forEach((c, i) => {
-      // Drift position over time
       const cx = c.x + Math.sin(t * c.speed * 0.5 + c.phase2) * 40;
-
       ctx.beginPath();
-
-      // Build a flowing ribbon using bezier curves
-      // Each ribbon is a vertical strip that waves horizontally
       const steps = 20;
       const points = [];
-
       for (let s = 0; s <= steps; s++) {
         const y = (s / steps) * H;
         const wave1 = Math.sin(y * c.freq + t * c.speed + c.phase) * c.amplitude;
@@ -523,60 +460,39 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
         const parallax = (y / H) * scrollOffset * (i % 2 === 0 ? 1 : -1) * 0.5;
         points.push({ x: cx + wave1 + wave2 + parallax, y });
       }
-
-      // Left edge of ribbon
       ctx.moveTo(points[0].x, points[0].y);
       for (let s = 1; s < points.length; s++) {
-        const prev = points[s - 1];
-        const curr = points[s];
-        const mx = (prev.x + curr.x) / 2;
-        const my = (prev.y + curr.y) / 2;
-        ctx.quadraticCurveTo(prev.x, prev.y, mx, my);
+        const prev = points[s-1], curr = points[s];
+        ctx.quadraticCurveTo(prev.x, prev.y, (prev.x+curr.x)/2, (prev.y+curr.y)/2);
       }
-
-      // Right edge of ribbon (going back up)
       const rpoints = points.map(p => ({ x: p.x + c.width, y: p.y }));
-      const last = rpoints[rpoints.length - 1];
-      ctx.lineTo(last.x, last.y);
-      for (let s = rpoints.length - 2; s >= 0; s--) {
-        const prev = rpoints[s + 1];
-        const curr = rpoints[s];
-        const mx = (prev.x + curr.x) / 2;
-        const my = (prev.y + curr.y) / 2;
-        ctx.quadraticCurveTo(prev.x, prev.y, mx, my);
+      ctx.lineTo(rpoints[rpoints.length-1].x, rpoints[rpoints.length-1].y);
+      for (let s = rpoints.length-2; s >= 0; s--) {
+        const prev = rpoints[s+1], curr = rpoints[s];
+        ctx.quadraticCurveTo(prev.x, prev.y, (prev.x+curr.x)/2, (prev.y+curr.y)/2);
       }
-
       ctx.closePath();
-
-      // Gradient fill along the ribbon — simulates light hitting a curved surface
       const grad = ctx.createLinearGradient(cx - c.amplitude, 0, cx + c.amplitude + c.width, 0);
       grad.addColorStop(0, `rgba(${c.r},${c.g},${c.b},0)`);
       grad.addColorStop(0.3, `rgba(${c.r},${c.g},${c.b},${c.alpha})`);
-      grad.addColorStop(0.7, `rgba(${c.r + 20},${c.g + 20},${c.b + 10},${c.alpha * 0.6})`);
+      grad.addColorStop(0.7, `rgba(${c.r+20},${c.g+20},${c.b+10},${c.alpha*0.6})`);
       grad.addColorStop(1, `rgba(${c.r},${c.g},${c.b},0)`);
-
       ctx.fillStyle = grad;
       ctx.fill();
-
-      // Thin bright edge line — like light catching the edge of a cut
-      if (c.alpha > 0.18) {
+      if (c.alpha > 0.25) {
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
         for (let s = 1; s < points.length; s++) {
-          const prev = points[s - 1];
-          const curr = points[s];
-          const mx = (prev.x + curr.x) / 2;
-          const my = (prev.y + curr.y) / 2;
-          ctx.quadraticCurveTo(prev.x, prev.y, mx, my);
+          const prev = points[s-1], curr = points[s];
+          ctx.quadraticCurveTo(prev.x, prev.y, (prev.x+curr.x)/2, (prev.y+curr.y)/2);
         }
-        ctx.strokeStyle = `rgba(${c.r + 60},${c.g + 40},${c.b + 20},0.15)`;
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = `rgba(${c.r+60},${c.g+40},${c.b+20},0.30)`;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
     });
 
-    // Subtle vignette — darkens edges so text area is always clean
-    const vignette = ctx.createRadialGradient(W * 0.7, H * 0.5, 0, W * 0.7, H * 0.5, W * 0.7);
+    const vignette = ctx.createRadialGradient(W*0.7, H*0.5, 0, W*0.7, H*0.5, W*0.7);
     vignette.addColorStop(0, 'rgba(0,0,0,0)');
     vignette.addColorStop(1, 'rgba(0,0,0,0.5)');
     ctx.fillStyle = vignette;
@@ -584,16 +500,12 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
   }
 
   function tick() {
-    t += 0.008;
+    t += 0.018;
     draw();
     requestAnimationFrame(tick);
   }
 
-  // Scroll handler for parallax
-  window.addEventListener('scroll', () => {
-    scrollY = window.scrollY;
-  }, { passive: true });
-
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
   window.addEventListener('resize', resize);
   resize();
   tick();
@@ -604,40 +516,4 @@ function updateBadge(){const b=document.getElementById('nav-cart-count');if(b)b.
 window.addEventListener('mhs_cart',updateBadge);
 updateBadge();
 
-// Favourites carousel
-const favs=PRODUCTS.filter(p=>p.favorite&&p.available);
-const track=document.getElementById('hp-track');
-const dotsEl=document.getElementById('hp-dots');
-const arrow=document.getElementById('hp-arrow');
-if(track){
-  track.innerHTML=favs.map(p=>`
-    <div class="product-card">
-      <div class="product-img" style="overflow:hidden;position:relative">${p.image?`<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`:`<span style="font-size:72px">${p.emoji}</span>`}${p.tag?`<div class="product-tag">${p.tag}</div>`:''}</div>
-      <div class="product-body">
-        <div class="product-name">${p.name}</div>
-        <div class="product-meta">${p.categoryLabel} · $${p.pricePerLb.toFixed(2)}/lb</div>
-        <div class="product-serves">🍽 ${p.piecesPerLb||p.serves||""}</div>
-        <div class="product-footer">
-          <div class="product-price">$${p.pricePerLb.toFixed(2)}<small>/lb</small></div>
-          <button class="add-btn" onclick="quickAdd('${p.id}')">+</button>
-        </div>
-      </div>
-    </div>`).join('');
-
-  function quickAdd(id){
-    const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
-    const items=getCart();const ex=items.find(i=>i.id===id);
-    if(ex)ex.lbs=parseFloat((ex.lbs+1).toFixed(2));else items.push({...p,lbs:1});
-    saveCart(items);updateBadge();
-    const t=document.getElementById('toast');if(t){t.textContent=p.emoji+' Added to cart';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
-  }
-
-  const cards=Array.from(track.querySelectorAll('.product-card'));
-  function getVIS(){return window.innerWidth<=600?1:3}
-  let VIS=getVIS();let cur=0;
-  window.addEventListener('resize',()=>{VIS=getVIS();goTo(0)});
-  const nd=Math.max(1,cards.length-VIS+1);
-  if(dotsEl){dotsEl.innerHTML=Array.from({length:nd},(_,i)=>`<div class="carousel-dot${i===0?' active':''}" data-i="${i}"></div>`).join('');dotsEl.querySelectorAll('.carousel-dot').forEach(d=>d.addEventListener('click',()=>goTo(parseInt(d.dataset.i||'0'))))}
-  function updateDots(){dotsEl?.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===cur))}
-  function goTo(idx){cur=idx;const cw=cards[0]?.offsetWidth||0;track.style.transform=`translateX(-${cur*(cw+24)}px)`;updateDots()}
-  if(arrow)arrow.addEventListener('click',()=>goTo(cur+1>ca
+// Favourites carousel — show favorites, fall back to f
