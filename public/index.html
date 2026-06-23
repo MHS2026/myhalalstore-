@@ -59,10 +59,30 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 @media(max-width:768px){.nav{padding:0 20px}.nav-links{display:none}}
 
 /* HERO */
+@keyframes heroFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-18px) rotate(2deg)}}
+@keyframes heroBadge1{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes heroBadge2{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes heroBadge3{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes heroGlow{0%,100%{box-shadow:0 0 60px 20px rgba(184,134,11,.18),0 0 120px 40px rgba(28,80,50,.25)}50%{box-shadow:0 0 80px 30px rgba(184,134,11,.30),0 0 160px 60px rgba(28,80,50,.35)}}
+@keyframes heroRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 .hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden;background:#0E1E15}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(14,30,21,.92) 0%,rgba(14,30,21,.60) 50%,rgba(14,30,21,.10) 100%);z-index:1}
-.hero-left{padding:80px 64px 80px 80px;position:relative;z-index:2;max-width:620px}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(14,30,21,.95) 0%,rgba(14,30,21,.70) 48%,rgba(14,30,21,.05) 100%);z-index:1}
+.hero-left{padding:80px 64px 80px 80px;position:relative;z-index:2;max-width:560px;flex-shrink:0}
+/* HERO RIGHT */
+.hero-right{position:relative;z-index:2;flex:1;display:flex;align-items:center;justify-content:center;min-height:92vh}
+.hero-plate{position:relative;width:340px;height:340px}
+.hero-plate-circle{width:340px;height:340px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(45,100,65,.5),rgba(14,30,21,.8));border:2px solid rgba(184,134,11,.25);animation:heroGlow 4s ease-in-out infinite;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hero-plate-ring{position:absolute;inset:-12px;border-radius:50%;border:2px dashed rgba(184,134,11,.2);animation:heroRing 20s linear infinite}
+.hero-plate-emoji{font-size:130px;animation:heroFloat 5s ease-in-out infinite;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5));line-height:1}
+.hero-badge{position:absolute;background:rgba(14,30,21,.85);backdrop-filter:blur(12px);border:1px solid rgba(184,134,11,.3);border-radius:14px;padding:10px 16px;color:#fff;display:flex;align-items:center;gap:10px;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.hero-badge .hb-icon{font-size:22px}
+.hero-badge .hb-text{display:flex;flex-direction:column}
+.hero-badge .hb-label{font-size:10px;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.hero-badge .hb-val{font-size:14px;font-weight:700;color:var(--gold-lt)}
+.hb1{top:-10px;left:-30px;animation:heroBadge1 4s ease-in-out infinite}
+.hb2{bottom:10px;left:-50px;animation:heroBadge2 5s ease-in-out infinite 0.5s}
+.hb3{top:60px;right:-40px;animation:heroBadge3 4.5s ease-in-out infinite 1s}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(184,134,11,.15);border:1px solid rgba(184,134,11,.35);color:var(--gold-lt);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:28px}
 .hero-left h1{font-size:66px;font-weight:700;color:#fff;margin-bottom:22px;letter-spacing:-1px}
 .hero-left h1 em{font-style:normal;color:var(--gold-lt)}
@@ -151,6 +171,7 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
 .sec-sub{color:var(--muted);font-size:15px;line-height:1.7;max-width:540px}
 /* ── TABLET (≤900px) ── */
 @media(max-width:900px){
+  .hero-right{display:none}
   .hero-left{padding:48px 24px}
   .hero-left h1{font-size:40px}
   .usp-strip{flex-wrap:wrap;gap:10px;padding:14px 24px}
@@ -248,6 +269,36 @@ input,select,textarea{font-family:'DM Sans',sans-serif}
     <div class="hero-btns">
       <a href="/shop.html" class="btn-gold">Shop Now →</a>
       <a href="https://wa.me/10000000000" class="btn-outline" target="_blank" rel="noopener">💬 WhatsApp</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-plate">
+      <div class="hero-plate-ring"></div>
+      <div class="hero-plate-circle">
+        <div class="hero-plate-emoji">🥩</div>
+      </div>
+      <!-- Floating badges -->
+      <div class="hero-badge hb1">
+        <span class="hb-icon">☪</span>
+        <div class="hb-text">
+          <span class="hb-label">Certified</span>
+          <span class="hb-val">100% Halal</span>
+        </div>
+      </div>
+      <div class="hero-badge hb2">
+        <span class="hb-icon">🚚</span>
+        <div class="hb-text">
+          <span class="hb-label">Delivery</span>
+          <span class="hb-val">Tue · Thu · Sat</span>
+        </div>
+      </div>
+      <div class="hero-badge hb3">
+        <span class="hb-icon">🌿</span>
+        <div class="hb-text">
+          <span class="hb-label">Always</span>
+          <span class="hb-val">Fresh & Pure</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
