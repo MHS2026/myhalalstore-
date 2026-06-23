@@ -212,4 +212,21 @@ if (order) {
     const lines = order.items.map(i => `${i.name} — ${i.lbs}lb`).join(', ');
     const promoNote = order.promoCode ? ` | Promo: ${order.promoCode}` : '';
     const msg = encodeURIComponent(
-      `Hi! J
+      `Hi! Just placed an order!
+
+Order: ${lines}${promoNote}
+Name: ${order.name}
+Phone: ${order.phone}
+Date: ${order.deliveryDate}
+Address: ${[order.street, order.apt, order.city].filter(Boolean).join(', ')}\``);
+    waBtn.href = `https://wa.me/${waNum}?text=${msg}`;
+  }
+}
+
+// Clear pending order from localStorage after displaying
+// (small delay so page renders first)
+setTimeout(() => localStorage.removeItem('mhs_pending_order'), 3000);
+
+</script>
+</body>
+</html>
