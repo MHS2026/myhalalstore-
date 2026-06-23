@@ -258,7 +258,14 @@ function applyPromo() {
     const del          = cartDelivery(sub);
     const amt          = promoDiscountAmount(result, sub, del);
     msgEl.style.color  = 'var(--forest)';
-    const amtLabel     = result.type === 'freeDelivery' ? ' (delivery waived!)' : ' (−$' + amt.toFixed(2) + ')';
+    let amtLabel;
+    if (result.type === 'freeDelivery') {
+      amtLabel = del === 0
+        ? ' — your order already qualifies for free delivery!'
+        : ' (delivery waived — saving $' + del.toFixed(2) + '!)';
+    } else {
+      amtLabel = ' (−$' + amt.toFixed(2) + ')';
+    }
     msgEl.textContent  = '✅ ' + result.label + amtLabel;
     input.value        = result.code;
     input.disabled     = true;
